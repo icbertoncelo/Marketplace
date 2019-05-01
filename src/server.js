@@ -1,3 +1,5 @@
+require('dotenv').config()
+
 const express = require('express')
 const validate = require('express-validation')
 const Youch = require('youch')
