@@ -2,3 +2,4 @@ node_modules
 yarn.lock
 src/config/auth.js
 src/config/mail.js
+src/config/sentry.js
