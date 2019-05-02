@@ -1,5 +1,6 @@
 const Ad = require('../models/Ad')
 const User = require('../models/User')
+const Purchase = require('../models/Purchase')
 const Queue = require('../services/Queue')
 const PurchaseMail = require('../jobs/PurchaseMail')
 
@@ -16,7 +17,36 @@ class PurchaseController {
       user
     }).save()
 
-    return res.send()
+    if (purchaseAd.purchasedBy) {
+      return res.status(400).json({ error: 'Add already sold' })
+    }
+
+    const purchaseIntention = await Purchase.create({
+      ...req.body,
+      buyer: req.userId
+    })
+    return res.json(purchaseIntention)
+  }
+
+  async sold (req, res) {
+    const { id } = req.params
+
+    const { ad } = await Purchase.findById(id).populate({
+      path: 'ad',
+      populate: {
+        path: 'author'
+      }
+    })
+
+    if (!ad.author._id.equals(req.userId)) {
+      return res.status(401).json({ error: "You aren't the ad author" })
+    }
+
+    ad.purchasedBy = id
+
+    await ad.save()
+
+    return res.json(ad)
   }
 }
 

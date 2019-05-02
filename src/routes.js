@@ -43,5 +43,6 @@ routes.post(
   validate(validators.Purchase),
   handle(controllers.PurchaseController.store)
 )
+routes.put('/purchases/:id', handle(controllers.PurchaseController.sold))
 
 module.exports = routes
